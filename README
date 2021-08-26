@@ -1,2 +1,1 @@
-# Add simulations to a folder in the data directory.
-# Doesnt matter if nested
+Point the make_hdf script to the simulation folder!
