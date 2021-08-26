@@ -35,7 +35,7 @@ if __name__ == '__main__':
     data_path = "./data/cov_cmaps_hdf.h5"
 
     # setting device on GPU if available, else CPU
-    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     print('Using device:', device)
     # Hyper-parameters
     EPOCHS = 50
