@@ -32,19 +32,18 @@ def get_cur_date():
 
 if __name__ == '__main__':
     cur_date = get_cur_date()
-    data_path = "./data/cov_cmaps_hdf.h5"
 
     # setting device on GPU if available, else CPU
-    device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
     print('Using device:', device)
     # Hyper-parameters
     EPOCHS = 50
-    l_r = 0.00002
+    l_r = 0.00001
     pool_size = 35
-    d_l = 12
+    d_l = 3 # Latent dimension
+    data_path = f"./data/train{pool_size}.h5"
     data = h.File(data_path,"r")
-
-    data = data[f"pooled_cmaps/{pool_size}x{pool_size}_cmaps"]
+    data = data[f"cmaps"]
     # Split data into train, validate, test sets at 80/10/10 split
     num_samples, *dsize = data.shape
     print(num_samples)
@@ -65,7 +64,7 @@ if __name__ == '__main__':
     test_data = eval_data.view(-1,1,*dsize)
     data = np.delete(data,choices_test,axis=0)
     # Save test data, test on eval, save to virt dset
-    batch_size = int(len(data)/400)
+    batch_size = int(len(data)/200)
     cvae = CVAE(dsize,d_l)
     gscaler = amp.GradScaler(enabled=True)
     if device.type == "cuda":
@@ -88,7 +87,7 @@ if __name__ == '__main__':
     if not os.path.isdir(file_dir):
         os.makedirs(file_dir)
     with open(f"{file_dir}/test_data.p","wb") as f_test:
-        pickle.dump(test_data,f_test)
+        pickle.dump((test_data,choices_test),f_test)
     del test_data
     print("Starting Training...")
     loss_list = []
@@ -108,7 +107,7 @@ if __name__ == '__main__':
                                  batch.view(-1,*dsize),
                                  mean,
                                  log_var)
-                loss = BCE + KLD
+                loss = BCE + 0.5*KLD
             loss_list.append(
                 f"EPOCH: {epoch} BATCH: {i} BCE: {BCE.item()}" 
                 f"KLD: {KLD.item()} EFF_LOSS: {loss.item()}"
