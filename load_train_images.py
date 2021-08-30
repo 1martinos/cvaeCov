@@ -20,13 +20,10 @@ def read_pickle(file_name):
                 recons.append(re)
             except EOFError:
                 break
-    imgs = torch.cat((*imgs))
-    recons = t
+    imgs = torch.stack((imgs))
+    recons = torch.stack((recons))
     return imgs, recons
 
-
-
-cutoff=0.5
 args = parser.parse_args()
 folder = args.folder
 if folder[-1] == "/":
@@ -47,7 +44,6 @@ for i,f in enumerate(files):
     imgs, recons = imgs.cpu(), recons.cpu()
     print(f"File {i} of {len(files)}",f)
     for j,(img,recon) in enumerate(tqdm(zip(imgs,recons))):
-        #recon = (recon > cutoff)*1
         img = axarr[0].imshow(img[0])
         axarr[1].imshow(recon)
         if cbar is None:

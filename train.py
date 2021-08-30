@@ -107,7 +107,7 @@ if __name__ == '__main__':
                                  batch.view(-1,*dsize),
                                  mean,
                                  log_var)
-                loss = BCE + 0.5*KLD
+                loss = BCE + KLD
             loss_list.append(
                 f"EPOCH: {epoch} BATCH: {i} BCE: {BCE.item()}" 
                 f"KLD: {KLD.item()} EFF_LOSS: {loss.item()}"
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         print('Cached:   ', round(torch.cuda.memory_reserved(0) / 1024 ** 3, 1), 'GB')
         print(f"Loss for epoch {epoch}: {round(loss_per_Epoch, 3)}")
         print(f"BCE: {round(BCE_per_Epoch, 3)}  KLD: {round(KLD_per_Epoch, 3)}")
-    pickle.dump(cvae, open(f"{file_dir}/pooled{pool_size}-{cur_date}.pickle", "wb"))
+    pickle.dump(cvae, open(f"{file_dir}/pooled{pool_size}-{cur_date}-KLD.pickle", "wb"))
     with open(f"./{file_dir}/loss_stats-{cur_date}.txt","w") as f:
         for x in loss_list:
             f.write(x + "\n")
