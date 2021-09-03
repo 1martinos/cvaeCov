@@ -34,13 +34,13 @@ if __name__ == '__main__':
     cur_date = get_cur_date()
 
     # setting device on GPU if available, else CPU
-    device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    device = torch.device('cuda:1' if torch.cuda.is_available() else 'cpu')
     print('Using device:', device)
     # Hyper-parameters
-    EPOCHS = 50
+    EPOCHS = 100
     l_r = 0.00001
     pool_size = 35
-    d_l = 3 # Latent dimension
+    d_l = 10 # Latent dimension
     data_path = f"./data/train{pool_size}.h5"
     data = h.File(data_path,"r")
     data = data[f"cmaps"]
@@ -83,7 +83,7 @@ if __name__ == '__main__':
                             pin_memory=pin,shuffle=True)
     dataLoader_eval = DataLoader(eval_data, batch_size=batch_size,
                             pin_memory=pin,shuffle=True)
-    file_dir = f"./models/cov{pool_size}-{cur_date}"
+    file_dir = f"./new_models/cov{pool_size}-{EPOCHS}epochs-{d_l}latent"
     if not os.path.isdir(file_dir):
         os.makedirs(file_dir)
     with open(f"{file_dir}/test_data.p","wb") as f_test:
@@ -148,7 +148,7 @@ if __name__ == '__main__':
         print('Cached:   ', round(torch.cuda.memory_reserved(0) / 1024 ** 3, 1), 'GB')
         print(f"Loss for epoch {epoch}: {round(loss_per_Epoch, 3)}")
         print(f"BCE: {round(BCE_per_Epoch, 3)}  KLD: {round(KLD_per_Epoch, 3)}")
-    pickle.dump(cvae, open(f"{file_dir}/pooled{pool_size}-{cur_date}-KLD.pickle", "wb"))
-    with open(f"./{file_dir}/loss_stats-{cur_date}.txt","w") as f:
+    pickle.dump(cvae,open(f"{file_dir}/pooled{pool_size}-{EPOCHS}epochs-{d_l}dim.pickle", "wb"))
+    with open(f"./{file_dir}/loss_stats.txt","w") as f:
         for x in loss_list:
             f.write(x + "\n")

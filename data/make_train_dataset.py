@@ -84,7 +84,6 @@ if __name__ == '__main__':
               f"Taking {training_frames} / {sum(ATP_frames)}\n"
               f"That is {training_frames/len(ATP_keys)} per sim\n")
         total_train_size = 2*training_frames
-        labels = []
         train_dict = {}
         for key in APO_keys:
             frames = np.arange(len(hdf[f"data/{key}"]))
@@ -117,6 +116,8 @@ if __name__ == '__main__':
         training_dset = train_hdf.create_dataset(f"cmaps",
                                shape=(total_train_size,size,size), 
                                dtype=np.int8)
+        labels = []
+        indices = []
         for key,choices in train_dict.items():
             print(f"Working on {key}")
             data = data_group[key]
@@ -128,6 +129,8 @@ if __name__ == '__main__':
                                 cutoff=cutoff,
                                 preapply=ca_cutoff)
                 training_dset[start_indx+i] = cmap
+                labels.append(key)
+                indices.append(index)
             start_indx += len(choices)
-            [labels.append(key) for i in range(len(data))]
         train_hdf.create_dataset("labels",data=labels)
+        train_hdf.create_dataset("frame_indices",data=indices)

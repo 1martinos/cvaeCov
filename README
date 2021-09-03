@@ -1,1 +1,17 @@
-Point the make_hdf script to the simulation folder!
+This is the code used to make the CVAE models for the covid helicase simulations.
+
+To run from scratch: 
+1. Run "python ./data/make_hdf.py /path/to/sim/data" to make a hdf of the sim contact maps
+2. Run "python ./data/make_train_dataset.py" to make a training dataset
+   - A training dataset is already provided in "./data/train35.h5", so these first two steps can be skipped!
+3. Run "python train.py"
+
+The training data used and labelled can be found at: 
+https://drive.google.com/file/d/1ohTbV7NiGGDOaHc8EFmL6Szkc7WQ8Bk8/view?usp=sharing
+   - These trajectories can be loaded with the "./analysis/ref.pdb" topology
+
+A pretrained model can be found at:
+https://drive.google.com/file/d/1lp_JiO8znJTM4K-Eut6ZtmeoyPjdE3Dq/view?usp=sharing
+
+To use with pretrained models, just place the models in a new directory called "models" in the same folder as this file.
+

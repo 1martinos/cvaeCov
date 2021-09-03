@@ -5,6 +5,8 @@
 *.p
 *-ubyte
 *.txt
+./models
+./new_models
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
